@@ -62,41 +62,24 @@ export function AnnouncementBar() {
 /*  Logo                                                               */
 /* ------------------------------------------------------------------ */
 
-function Logo({ scrolled }: { scrolled?: boolean }) {
+function Logo({ scrolled, onClick }: { scrolled?: boolean; onClick?: () => void }) {
   return (
     <Link
       to="/"
-      className="group flex items-center gap-2 sm:gap-2.5 leading-none max-w-full"
+      onClick={onClick}
+      className="group inline-flex items-center transition-all duration-300 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-2xl"
       aria-label="The Nakashi Furnitures Home"
     >
-      <div
+      <img
+        src="/nakashi-icon.png"
+        alt="The Nakashi Furnitures"
+        width={150}
+        height={150}
         className={cn(
-          "flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-[oklch(0.48_0.19_18)] to-dark-wood text-white shadow-soft transition-all duration-300 group-hover:scale-105",
-          scrolled ? "h-7.5 w-7.5 sm:h-8 sm:w-8" : "h-8.5 w-8.5 sm:h-9 sm:w-9",
+          "w-auto object-contain rounded-2xl shadow-xs transition-transform duration-300 group-hover:scale-105",
+          scrolled ? "h-9 w-9 sm:h-10 sm:w-10" : "h-11 w-11 sm:h-13 sm:w-13",
         )}
-      >
-        <span
-          className={cn(
-            "font-display font-bold transition-all duration-300",
-            scrolled ? "text-sm sm:text-base" : "text-base sm:text-lg",
-          )}
-        >
-          N
-        </span>
-      </div>
-      <div className="min-w-0">
-        <span
-          className={cn(
-            "block font-display font-bold tracking-tight text-foreground transition-all duration-300 group-hover:text-primary leading-tight",
-            scrolled ? "text-base sm:text-lg lg:text-xl" : "text-lg sm:text-xl lg:text-2xl",
-          )}
-        >
-          NAKASHI
-        </span>
-        <span className="block truncate text-[8px] sm:text-[9px] font-semibold uppercase tracking-[0.22em] sm:tracking-[0.32em] text-muted-foreground">
-          The Nakashi Furnitures
-        </span>
-      </div>
+      />
     </Link>
   );
 }
@@ -461,7 +444,7 @@ export function SiteHeader() {
                 >
                   {/* Drawer header */}
                   <div className="flex h-[64px] sm:h-[74px] shrink-0 items-center justify-between border-b border-border/80 px-5 sm:px-6 bg-background">
-                    <Logo />
+                    <Logo onClick={() => setMenuOpen(false)} />
                     <button
                       type="button"
                       aria-label="Close menu"

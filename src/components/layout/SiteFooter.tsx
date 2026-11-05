@@ -83,18 +83,18 @@ export function SiteFooter() {
         {/* Brand column */}
         <ScrollReveal direction="up" delay={0.1}>
           <div>
-            <Link to="/" className="group inline-flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-yellow text-charcoal shadow-soft font-display text-xl font-bold">
-                N
-              </div>
-              <div>
-                <span className="font-display text-2xl font-bold tracking-tight text-white transition-colors group-hover:text-brand-yellow">
-                  THE NAKASHI
-                </span>
-                <span className="block text-[10px] tracking-[0.3em] uppercase text-brand-yellow/80">
-                  Furnitures · Chennai
-                </span>
-              </div>
+            <Link
+              to="/"
+              className="group inline-flex items-center transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow/50 rounded-lg"
+              aria-label="The Nakashi Furnitures Home"
+            >
+              <img
+                src="/nakashi-logo-card.png"
+                alt="The Nakashi Furnitures"
+                width={263}
+                height={150}
+                className="h-16 sm:h-20 w-auto object-contain rounded-lg shadow-md border border-brand-yellow/20"
+              />
             </Link>
 
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-burgundy-foreground/80">
@@ -198,7 +198,16 @@ export function SiteFooter() {
       {/* Bottom bar */}
       <div className="border-t border-white/10 bg-black/25">
         <Container className="flex flex-col gap-3 py-6 text-xs text-burgundy-foreground/60 sm:flex-row sm:items-center sm:justify-between">
-          <span>© {new Date().getFullYear()} The Nakashi Furnitures. All rights reserved.</span>
+          <div className="flex items-center gap-2">
+            <img
+              src="/nakashi-icon.png"
+              alt=""
+              width={16}
+              height={16}
+              className="h-4 w-4 rounded-xs object-contain opacity-80"
+            />
+            <span>© {new Date().getFullYear()} The Nakashi Furnitures. All rights reserved.</span>
+          </div>
           <span className="text-burgundy-foreground/80 font-medium">
             Proprietor: {BRAND.owner} · Pallikaranai, Chennai
           </span>

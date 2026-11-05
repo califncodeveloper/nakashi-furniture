@@ -121,6 +121,17 @@ export function UpiQrPayment({
           {/* Subtle gold luxury accent ribbon */}
           <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-brand-yellow via-primary to-brand-yellow" />
 
+          {/* Brand Logo */}
+          <div className="flex justify-center mb-3">
+            <img
+              src="/nakashi-logo.png"
+              alt="The Nakashi Furnitures"
+              width={252}
+              height={150}
+              className="h-10 w-auto object-contain"
+            />
+          </div>
+
           <div className="flex items-center justify-center gap-2 mb-3">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
               <QrCode className="h-4 w-4" />

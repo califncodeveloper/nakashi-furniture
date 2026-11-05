@@ -930,12 +930,15 @@ CREATE POLICY "Allow delete product images"
         <div className="w-full max-w-md space-y-6">
           {/* Logo & Header */}
           <div className="text-center">
-            <span className="font-display text-2xl font-bold tracking-tight text-primary">
-              NAKASHI
-            </span>
-            <span className="block text-[10px] uppercase tracking-[0.3em] text-muted-foreground mt-0.5">
-              The Nakashi Furnitures
-            </span>
+            <Link to="/" className="inline-block transition-transform hover:scale-105" title="The Nakashi Furnitures Home">
+              <img
+                src="/nakashi-logo.png"
+                alt="The Nakashi Furnitures"
+                width={252}
+                height={150}
+                className="mx-auto h-16 w-auto object-contain"
+              />
+            </Link>
             <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-burgundy/10 px-3 py-1 text-xs font-semibold text-burgundy">
               <Lock className="h-3.5 w-3.5" /> Store Manager Authentication
             </div>
@@ -1136,9 +1139,15 @@ CREATE POLICY "Allow delete product images"
       <header className="border-b border-border bg-white shadow-2xs">
         <Container className="flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="font-display text-xl font-bold tracking-tight text-primary">
-              NAKASHI
-            </span>
+            <Link to="/" className="inline-flex items-center" title="The Nakashi Furnitures Home">
+              <img
+                src="/nakashi-logo.png"
+                alt="The Nakashi Furnitures"
+                width={252}
+                height={150}
+                className="h-10 w-auto object-contain"
+              />
+            </Link>
             <span className="hidden sm:inline-block h-4 w-px bg-border" />
             <div className="flex items-center gap-2">
               <span className="font-display text-sm font-semibold text-charcoal">

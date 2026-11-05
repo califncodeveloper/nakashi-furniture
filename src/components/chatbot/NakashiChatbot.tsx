@@ -240,7 +240,9 @@ function ChatProductCard({
 function TypingIndicator() {
   return (
     <div className="nk-chat-typing">
-      <div className="nk-chat-typing-avatar">NK</div>
+      <div className="nk-chat-typing-avatar">
+        <img src="/nakashi-icon.png" alt="Nakashi" className="h-full w-full object-cover" />
+      </div>
       <div className="nk-chat-typing-dots">
         <span className="nk-chat-dot" />
         <span className="nk-chat-dot" />
@@ -586,7 +588,7 @@ export function NakashiChatbot() {
           <div className="nk-chat-header">
             <div className="nk-chat-header-info">
               <div className="nk-chat-header-avatar">
-                <Sparkles size={18} />
+                <img src="/nakashi-icon.png" alt="Nakashi" className="h-full w-full object-cover" />
               </div>
               <div>
                 <h3 className="nk-chat-header-title">NAKASHI Assistant</h3>
@@ -638,7 +640,11 @@ export function NakashiChatbot() {
                     key={msg.id}
                     className={`nk-chat-msg ${msg.role === "user" ? "nk-chat-msg--user" : "nk-chat-msg--assistant"}`}
                   >
-                    {msg.role === "assistant" && <div className="nk-chat-msg-avatar">NK</div>}
+                    {msg.role === "assistant" && (
+                      <div className="nk-chat-msg-avatar">
+                        <img src="/nakashi-icon.png" alt="Nakashi" className="h-full w-full object-cover" />
+                      </div>
+                    )}
                     <div className="nk-chat-msg-content">
                       <div
                         className="nk-chat-msg-bubble"

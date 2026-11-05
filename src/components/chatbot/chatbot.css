@@ -211,6 +211,7 @@
   justify-content: center;
   flex-shrink: 0;
   backdrop-filter: blur(4px);
+  overflow: hidden;
 }
 
 .nk-chat-header-title {
@@ -355,6 +356,7 @@
   letter-spacing: 0.5px;
   flex-shrink: 0;
   margin-top: 2px;
+  overflow: hidden;
 }
 
 .nk-chat-msg-content {
@@ -705,6 +707,7 @@
   font-weight: 700;
   letter-spacing: 0.5px;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .nk-chat-typing-dots {

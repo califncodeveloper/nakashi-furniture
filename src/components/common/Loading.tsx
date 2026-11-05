@@ -17,10 +17,15 @@ export function Loading({ label = "Loading", fullScreen, className }: LoadingPro
         className,
       )}
     >
-      <div className="relative h-10 w-10">
-        <span className="absolute inset-0 rounded-full border-2 border-border" />
-        <span className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-primary" />
-        <span className="absolute inset-[38%] rounded-full bg-brand-yellow" />
+      <div className="relative flex items-center justify-center">
+        <div className="h-14 w-14 rounded-2xl border-2 border-primary/20 border-t-primary animate-spin" />
+        <img
+          src="/nakashi-icon.png"
+          alt="The Nakashi Furnitures"
+          width={36}
+          height={36}
+          className="absolute h-9 w-9 rounded-xl object-contain animate-pulse"
+        />
       </div>
       <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</span>
     </div>
