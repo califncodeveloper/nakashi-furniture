@@ -332,22 +332,26 @@ function ProductDetailPage() {
             </div>
 
             {/* PRICING BLOCK */}
-            <div className="mt-6 rounded-xl border border-stone-200/90 bg-[#faf9f6] p-4 dark:border-stone-800 dark:bg-stone-900/40">
-              <div className="flex items-baseline gap-3">
+            <div className="mt-6 rounded-2xl border border-stone-200/90 bg-[#faf9f6] p-5 dark:border-stone-800 dark:bg-stone-900/40">
+              <div className="flex flex-wrap items-baseline gap-x-3.5 gap-y-2">
                 {product.price !== undefined ? (
                   <>
-                    <span className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                    <span className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[42px] leading-none">
                       {formatPrice(product.price)}
                     </span>
 
                     {/* Original Price ONLY if verified */}
                     {isOriginalPriceVerified && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-base text-muted-foreground line-through">
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <span className="text-sm sm:text-base font-normal text-muted-foreground/75 line-through decoration-muted-foreground/60 leading-none">
+                          <span className="sr-only">Original MRP: </span>
+                          <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 mr-1">
+                            MRP
+                          </span>
                           {formatPrice(product.originalPrice!)}
                         </span>
                         {discountPercent && (
-                          <span className="rounded-sm bg-brand-yellow/80 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-charcoal">
+                          <span className="inline-flex items-center rounded-md bg-brand-yellow/90 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-charcoal shadow-2xs leading-none">
                             {discountPercent}% OFF
                           </span>
                         )}
@@ -366,7 +370,7 @@ function ProductDetailPage() {
                 )}
               </div>
 
-              <p className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
+              <p className="mt-3 text-xs text-muted-foreground flex items-center gap-1.5">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                 <span>
                   Inclusive of all GST. Free white-glove setup within Chennai metropolitan area.
@@ -426,7 +430,7 @@ function ProductDetailPage() {
                 {product.price && (
                   <span className="text-xs text-muted-foreground ml-auto font-medium">
                     Subtotal:{" "}
-                    <strong className="text-foreground">
+                    <strong className="font-display text-base font-bold tracking-tight text-foreground ml-1">
                       {formatPrice(product.price * quantity)}
                     </strong>
                   </span>

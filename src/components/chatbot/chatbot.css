@@ -160,6 +160,8 @@
   overflow: hidden;
   animation: nk-chat-slide-in 0.35s var(--nk-chat-ease) forwards;
   font-family: "Inter", system-ui, sans-serif;
+  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
 }
 
 .nk-chat-window--minimized {
@@ -189,6 +191,8 @@
   background: linear-gradient(135deg, var(--nk-chat-primary) 0%, var(--nk-chat-primary-hover) 100%);
   color: #ffffff;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .nk-chat-header-info {
@@ -276,8 +280,10 @@
 /*  Messages Area                                                      */
 /* ------------------------------------------------------------------ */
 .nk-chat-messages {
-  flex: 1;
+  flex: 1 1 0%;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -285,6 +291,8 @@
   background: var(--nk-chat-surface);
   scroll-behavior: smooth;
   overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Custom scrollbar */
@@ -309,6 +317,7 @@
   display: flex;
   gap: 8px;
   max-width: 88%;
+  min-width: 0;
   animation: nk-msg-in 0.3s var(--nk-chat-ease);
 }
 
@@ -352,6 +361,9 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  flex: 1;
 }
 
 .nk-chat-msg-bubble {
@@ -360,6 +372,9 @@
   font-size: 13.5px;
   line-height: 1.55;
   word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .nk-chat-msg--user .nk-chat-msg-bubble {
@@ -455,15 +470,55 @@
   text-decoration-color: var(--nk-chat-primary);
 }
 
+/* Preformatted Code & Inline Code */
+.nk-chat-msg-bubble pre,
+.nk-chat-pre {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--nk-chat-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 8px 0;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.nk-chat-msg-bubble code,
+.nk-chat-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px 5px;
+  border-radius: 4px;
+  word-break: break-word;
+}
+
+.nk-chat-msg-bubble blockquote,
+.nk-chat-blockquote {
+  border-left: 3px solid var(--nk-chat-primary);
+  margin: 6px 0;
+  padding-left: 10px;
+  color: var(--nk-chat-text-muted);
+  font-style: italic;
+}
+
 /* Tables */
 .nk-chat-msg-bubble .nk-chat-table-wrap {
   overflow-x: auto;
   margin: 8px 0;
   border-radius: 8px;
   border: 1px solid var(--nk-chat-border);
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 .nk-chat-msg-bubble .nk-chat-table {
   width: 100%;
+  min-width: 240px;
   border-collapse: collapse;
   font-size: 12px;
 }
@@ -490,6 +545,8 @@
   flex-direction: column;
   gap: 8px;
   margin-top: 8px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .nk-chat-product-card {
@@ -501,6 +558,9 @@
   border-radius: 12px;
   text-decoration: none;
   color: inherit;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -574,21 +634,38 @@
 
 .nk-chat-product-price-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 6px;
-  margin-top: 1px;
+  flex-wrap: wrap;
+  margin-top: 2px;
 }
 
 .nk-chat-product-price {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--nk-chat-text);
+  line-height: 1.2;
 }
 
 .nk-chat-product-orig-price {
   font-size: 11px;
   color: var(--nk-chat-text-muted);
   text-decoration: line-through;
+  opacity: 0.8;
+  line-height: 1.2;
+}
+
+.nk-chat-product-discount {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #222;
+  background: #f7ca54;
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1.2;
 }
 
 .nk-chat-product-contact {
@@ -715,6 +792,8 @@
   padding: 12px 14px;
   background: var(--nk-chat-bg);
   border-top: 1px solid var(--nk-chat-border);
+  position: relative;
+  z-index: 2;
 }
 
 .nk-chat-input-wrap {
@@ -748,6 +827,7 @@
   min-height: 20px;
   max-height: 80px;
   padding: 4px 0;
+  overflow-y: auto;
 }
 
 .nk-chat-input::placeholder {
@@ -797,12 +877,16 @@
 /* ------------------------------------------------------------------ */
 @media (max-width: 480px) {
   .nk-chat-window {
-    width: calc(100vw - 16px);
-    width: calc(100dvw - 16px);
-    height: calc(100vh - 32px);
-    height: calc(100dvh - 32px);
-    bottom: 16px;
+    left: 8px;
     right: 8px;
+    width: auto;
+    max-width: calc(100vw - 16px);
+    max-width: calc(100dvw - 16px);
+    height: calc(100vh - 24px);
+    height: calc(100dvh - 24px);
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    bottom: 12px;
     border-radius: 14px;
   }
 
@@ -832,8 +916,14 @@
 @media (min-width: 481px) and (max-width: 768px) {
   .nk-chat-window {
     width: 380px;
+    max-width: calc(100vw - 32px);
+    max-width: calc(100dvw - 32px);
     height: calc(100vh - 120px);
     height: calc(100dvh - 120px);
+    max-height: calc(100vh - 120px);
+    max-height: calc(100dvh - 120px);
+    bottom: 24px;
+    right: 16px;
   }
 }
 

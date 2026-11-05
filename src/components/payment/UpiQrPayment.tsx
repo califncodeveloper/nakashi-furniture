@@ -154,7 +154,7 @@ export function UpiQrPayment({
               Payment Amount
             </p>
             {amount && amount > 0 ? (
-              <p className="font-display text-2xl font-bold text-primary mt-0.5">
+              <p className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-primary mt-1 leading-none">
                 {formatPrice(activeAmount)}
               </p>
             ) : (

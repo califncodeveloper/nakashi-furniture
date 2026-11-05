@@ -206,9 +206,16 @@ function CartPage() {
                                 SKU: {item.sku}
                               </span>
                             )}
-                            <p className="mt-1 text-sm font-bold text-foreground">
-                              {item.price ? formatPrice(item.price) : "Price on request"}
-                            </p>
+                            <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                              <span className="font-display text-base font-bold tracking-tight text-foreground sm:text-lg">
+                                {item.price ? formatPrice(item.price * item.qty) : "Price on request"}
+                              </span>
+                              {item.price && item.qty > 1 && (
+                                <span className="text-xs text-muted-foreground/80 font-normal">
+                                  ({formatPrice(item.price)} each)
+                                </span>
+                              )}
+                            </div>
                           </div>
 
                           {/* Quantity Selector */}
@@ -265,9 +272,9 @@ function CartPage() {
                   <h3 className="font-display text-xl font-bold text-foreground">Order Summary</h3>
 
                   <div className="mt-5 space-y-3.5 text-sm border-t border-border/80 pt-4">
-                    <div className="flex justify-between text-muted-foreground">
+                    <div className="flex justify-between items-baseline text-muted-foreground">
                       <span>Subtotal ({totalItemsCount} items)</span>
-                      <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
+                      <span className="font-semibold text-foreground tracking-tight">{formatPrice(totalPrice)}</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
                       <span>White-Glove Delivery (Chennai)</span>
@@ -282,9 +289,9 @@ function CartPage() {
                       <span className="text-muted-foreground">Included</span>
                     </div>
 
-                    <div className="border-t border-border/80 pt-4 flex justify-between text-base font-bold text-foreground">
+                    <div className="border-t border-border/80 pt-4 flex justify-between items-baseline text-base font-bold text-foreground">
                       <span>Estimated Total</span>
-                      <span className="font-display text-2xl text-primary">
+                      <span className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-primary">
                         {formatPrice(totalPrice)}
                       </span>
                     </div>

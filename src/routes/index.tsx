@@ -12,7 +12,8 @@ import {
   Quote,
   Phone,
 } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
+import { HeroSlider } from "@/components/home/HeroSlider";
 import { buttonVariants } from "@/components/common/Button";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Container } from "@/components/layout/Container";
@@ -149,7 +150,7 @@ function Index() {
 
   return (
     <div id="top" className="relative">
-      <Hero />
+      <HeroSlider />
       <Categories />
       <Collections />
       <ProductRow
@@ -177,169 +178,7 @@ function Index() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Visually Engaging Hero Section                                     */
-/* ------------------------------------------------------------------ */
 
-function Hero() {
-  const prefersReduced = useReducedMotion();
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
-
-  return (
-    <section
-      ref={heroRef}
-      className="relative overflow-hidden border-b border-border/80 bg-gradient-to-b from-muted/40 via-background to-background py-12 md:py-20 lg:py-24"
-    >
-      {/* Subtle background radial glow */}
-      <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[800px] rounded-full bg-gradient-to-br from-primary/8 via-brand-yellow/10 to-transparent blur-3xl" />
-
-      <Container className="relative grid items-center gap-12 lg:grid-cols-[1.1fr_1.2fr] lg:gap-16">
-        {/* Left Column: Typography & CTAs */}
-        <div className="z-10">
-          <FadeIn delay={0.1} direction="up">
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-primary/20 bg-background/80 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-primary shadow-xs backdrop-blur-md">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-              </span>
-              <span>The Nakashi Furnitures · Chennai</span>
-            </div>
-          </FadeIn>
-
-          <FadeIn delay={0.25} direction="up">
-            <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl xl:text-7xl">
-              Make Your Home <br />
-              <span className="relative inline-block">
-                <em className="font-serif italic font-normal text-primary">Beautiful</em>
-                <svg
-                  className="absolute -bottom-2 left-0 w-full text-brand-yellow/60"
-                  viewBox="0 0 250 12"
-                  fill="none"
-                >
-                  <path
-                    d="M2 9C60 3 190 3 248 9"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              {" & Enduring."}
-            </h1>
-          </FadeIn>
-
-          <FadeIn delay={0.4} direction="up">
-            <p className="mt-7 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Discover master-crafted solid hardwoods, rich tailored velvets, and ergonomic living
-              solutions tailored for Chennai's finest residences.
-            </p>
-          </FadeIn>
-
-          {/* CTAs */}
-          <FadeIn delay={0.55} direction="up">
-            <div className="mt-9 flex flex-wrap items-center gap-3.5">
-              <Link
-                to="/shop"
-                className={buttonVariants({ size: "lg", className: "shadow-lift gap-3" })}
-              >
-                <span>Explore Collection</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/contact"
-                className={buttonVariants({ variant: "outline", size: "lg", className: "gap-2" })}
-              >
-                <span>Visit Showroom</span>
-              </Link>
-            </div>
-          </FadeIn>
-
-          {/* Trust Highlights */}
-          <FadeIn delay={0.65} direction="up">
-            <div className="mt-12 grid grid-cols-3 gap-4 border-t border-border/80 pt-6 text-left">
-              <div>
-                <p className="font-display text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                  100%
-                </p>
-                <p className="text-xs text-muted-foreground">Solid Hardwoods</p>
-              </div>
-              <div>
-                <p className="font-display text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                  5-Year
-                </p>
-                <p className="text-xs text-muted-foreground">Structure Warranty</p>
-              </div>
-              <div>
-                <p className="font-display text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                  White Glove
-                </p>
-                <p className="text-xs text-muted-foreground">Chennai Delivery</p>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-
-        {/* Right Column: Hero Visual with Luxury Overlay */}
-        <FadeIn delay={0.3} direction="none">
-          <div className="relative">
-            <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-card shadow-premium group">
-              <motion.div style={!prefersReduced ? { y: heroImageY, scale: heroScale } : undefined}>
-                <img
-                  src={hero}
-                  alt="Burgundy velvet sofa in a sunlit luxury living room"
-                  width={1600}
-                  height={1200}
-                  className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-104"
-                />
-              </motion.div>
-
-              {/* Ambient image vignette */}
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/10 to-transparent" />
-
-              {/* Glass Showroom Location Pill */}
-              <motion.div
-                initial={!prefersReduced ? { opacity: 0, y: 20 } : undefined}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute bottom-5 left-5 right-5 sm:right-auto sm:max-w-sm rounded-2xl border border-white/20 bg-charcoal/80 p-4 shadow-lift backdrop-blur-md text-white"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <span className="block text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-yellow">
-                      Experience In Person
-                    </span>
-                    <p className="mt-0.5 font-display text-base font-semibold text-white">
-                      Pallikaranai Showroom
-                    </p>
-                    <p className="text-xs text-white/75 truncate">
-                      No. 99, Velachery Main Road, Chennai
-                    </p>
-                  </div>
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-yellow text-charcoal shadow-soft font-bold text-xs">
-                    OPEN
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Decorative floating ring */}
-            <div
-              className="absolute -right-4 -top-4 hidden h-24 w-24 rounded-full border-2 border-dashed border-brand-yellow/60 md:block animate-spin"
-              style={{ animationDuration: "25s" }}
-              aria-hidden="true"
-            />
-          </div>
-        </FadeIn>
-      </Container>
-    </section>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /*  Categories Section                                                 */

@@ -29,6 +29,15 @@ export function ProductCard({
   const productUrl = `/product/${slug}`;
   const isAvailable = product.isAvailable !== false && product.is_available !== false;
 
+  const isDiscounted =
+    typeof product.price === "number" &&
+    typeof product.originalPrice === "number" &&
+    product.originalPrice > product.price;
+
+  const cardDiscountPercent = isDiscounted
+    ? Math.round(((product.originalPrice! - product.price!) / product.originalPrice!) * 100)
+    : null;
+
   const handleWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -134,20 +143,28 @@ export function ProductCard({
         </Link>
 
         {/* Price Row */}
-        <div className="mt-2 flex items-baseline gap-2">
+        <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-1 min-h-[1.75rem]">
           {product.price !== undefined ? (
             <>
-              <span className="font-display text-lg font-bold text-foreground">
+              <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-foreground leading-none">
                 {formatPrice(product.price)}
               </span>
-              {product.originalPrice && product.originalPrice > product.price && (
-                <span className="text-xs text-muted-foreground line-through decoration-muted-foreground/60">
-                  {formatPrice(product.originalPrice)}
-                </span>
+              {isDiscounted && (
+                <>
+                  <span className="text-xs sm:text-[13px] font-normal text-muted-foreground/75 line-through decoration-muted-foreground/50 leading-none">
+                    <span className="sr-only">Original price: </span>
+                    {formatPrice(product.originalPrice!)}
+                  </span>
+                  {cardDiscountPercent && (
+                    <span className="inline-flex items-center rounded-md bg-brand-yellow/85 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-charcoal leading-none">
+                      {cardDiscountPercent}% OFF
+                    </span>
+                  )}
+                </>
               )}
             </>
           ) : (
-            <span className="text-xs font-semibold text-muted-foreground tracking-wide">
+            <span className="text-xs font-medium tracking-wide text-muted-foreground/90 italic">
               Price on request
             </span>
           )}
@@ -210,7 +227,7 @@ export function ProductCardSkeleton() {
       <div className="mt-4 space-y-2.5 px-1">
         <div className="h-3 w-1/4 animate-pulse rounded-md bg-muted/60" />
         <div className="h-5 w-3/4 animate-pulse rounded-md bg-muted/60" />
-        <div className="h-4 w-1/3 animate-pulse rounded-md bg-muted/60" />
+        <div className="h-6 w-2/5 animate-pulse rounded-md bg-muted/60" />
         <div className="mt-4 h-9 animate-pulse rounded-xl bg-muted/60" />
       </div>
     </div>

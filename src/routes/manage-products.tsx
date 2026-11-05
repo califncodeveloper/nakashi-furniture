@@ -1476,12 +1476,17 @@ CREATE POLICY "Allow delete product images"
                             </span>
                           ) : p.price !== undefined ? (
                             <div>
-                              <span className="font-semibold text-charcoal">
+                              <span className="font-semibold text-foreground text-sm tracking-tight">
                                 {formatPrice(p.price)}
                               </span>
                               {p.originalPrice && p.originalPrice > p.price && (
-                                <div className="text-[11px] text-muted-foreground line-through">
-                                  {formatPrice(p.originalPrice)}
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className="text-[11px] text-muted-foreground/75 line-through">
+                                    {formatPrice(p.originalPrice)}
+                                  </span>
+                                  <span className="rounded bg-brand-yellow/80 px-1 py-0.2 text-[9.5px] font-bold text-charcoal uppercase leading-none">
+                                    {Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)}%
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -2586,21 +2591,36 @@ CREATE POLICY "Allow delete product images"
                   </DialogTitle>
                 </DialogHeader>
 
-                <div className="mt-4 flex items-baseline gap-3">
+                <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
                   {previewProduct.price !== undefined ? (
                     <>
-                      <span className="font-display text-2xl font-bold text-foreground">
+                      <span className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground leading-none">
                         {formatPrice(previewProduct.price)}
                       </span>
-                      {previewProduct.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through">
-                          {formatPrice(previewProduct.originalPrice)}
-                        </span>
-                      )}
+                      {previewProduct.originalPrice &&
+                        previewProduct.originalPrice > previewProduct.price && (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-normal text-muted-foreground/75 line-through decoration-muted-foreground/60 leading-none">
+                              <span className="sr-only">Original MRP: </span>
+                              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70 mr-1">
+                                MRP
+                              </span>
+                              {formatPrice(previewProduct.originalPrice)}
+                            </span>
+                            <span className="inline-flex items-center rounded-md bg-brand-yellow/85 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-charcoal leading-none">
+                              {Math.round(
+                                ((previewProduct.originalPrice - previewProduct.price) /
+                                  previewProduct.originalPrice) *
+                                  100,
+                              )}
+                              % OFF
+                            </span>
+                          </div>
+                        )}
                     </>
                   ) : (
-                    <span className="font-display text-lg font-medium text-foreground">
-                      ₹ Price on Request / Custom Quote
+                    <span className="font-display text-lg font-medium text-muted-foreground italic">
+                      Price on Request / Custom Quote
                     </span>
                   )}
                 </div>

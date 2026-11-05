@@ -25,6 +25,14 @@ function renderMarkdown(text: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
+  // Code blocks: ```language ... ```
+  html = html.replace(/```(?:[a-zA-Z0-9_-]+)?\n?([\s\S]*?)```/g, (_, code) => {
+    return `<pre class="nk-chat-pre"><code>${code.trim()}</code></pre>`;
+  });
+
+  // Inline code: `code`
+  html = html.replace(/`([^`]+)`/g, '<code class="nk-chat-code">$1</code>');
+
   // Bold: **text** or __text__
   html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
@@ -36,6 +44,9 @@ function renderMarkdown(text: string): string {
   html = html.replace(/^### (.+)$/gm, '<h4 class="nk-chat-h4">$1</h4>');
   html = html.replace(/^## (.+)$/gm, '<h3 class="nk-chat-h3">$1</h3>');
   html = html.replace(/^# (.+)$/gm, '<h3 class="nk-chat-h3">$1</h3>');
+
+  // Blockquotes: > quote
+  html = html.replace(/^>\s+(.+)$/gm, '<blockquote class="nk-chat-blockquote">$1</blockquote>');
 
   // Horizontal rule
   html = html.replace(/^---$/gm, '<hr class="nk-chat-hr" />');
@@ -173,7 +184,13 @@ function getQuickSuggestions(): { emoji: string; label: string; query: string }[
 /*  Product Card Component                                            */
 /* ------------------------------------------------------------------ */
 
-function ChatProductCard({ product }: { product: ProductCard }) {
+function ChatProductCard({
+  product,
+  onImageLoad,
+}: {
+  product: ProductCard;
+  onImageLoad?: () => void;
+}) {
   return (
     <a
       href={`/product/${product.slug || product.id}`}
@@ -186,6 +203,7 @@ function ChatProductCard({ product }: { product: ProductCard }) {
           alt={product.name}
           className="nk-chat-product-img"
           loading="lazy"
+          onLoad={onImageLoad}
         />
         {product.isAvailable === false && <span className="nk-chat-product-oos">Out of Stock</span>}
       </div>
@@ -196,9 +214,14 @@ function ChatProductCard({ product }: { product: ProductCard }) {
           <div className="nk-chat-product-price-row">
             <span className="nk-chat-product-price">{formatPrice(product.price)}</span>
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="nk-chat-product-orig-price">
-                {formatPrice(product.originalPrice)}
-              </span>
+              <>
+                <span className="nk-chat-product-orig-price">
+                  {formatPrice(product.originalPrice)}
+                </span>
+                <span className="nk-chat-product-discount">
+                  {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                </span>
+              </>
             )}
           </div>
         ) : (
@@ -247,9 +270,11 @@ export function NakashiChatbot() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
 
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatWindowRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef(true);
 
   // Unique client ID for rate limiting
   const clientIdRef = useRef(
@@ -262,6 +287,29 @@ export function NakashiChatbot() {
           })()
       : "server",
   );
+
+  // Internal smooth scrolling to latest message without scrolling outer page
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    if (typeof container.scrollTo === "function") {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior,
+      });
+    } else {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, []);
+
+  // Track if user is scrolled near bottom
+  const handleScroll = useCallback(() => {
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    const threshold = 80;
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight <= threshold;
+    isNearBottomRef.current = isNearBottom;
+  }, []);
 
   // Welcome message logic — show once per session
   useEffect(() => {
@@ -282,16 +330,84 @@ export function NakashiChatbot() {
     return undefined;
   }, []);
 
-  // Auto-scroll to bottom
+  // Automatically scroll to bottom when messages or loading state change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+    scrollToBottom("smooth");
+    const timer = setTimeout(() => {
+      scrollToBottom("smooth");
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [messages, isLoading, scrollToBottom]);
 
-  // Focus input when chat opens
+  // Jump to bottom and focus input when chat opens
   useEffect(() => {
     if (isOpen && !isMinimized) {
-      setTimeout(() => inputRef.current?.focus(), 200);
+      scrollToBottom("auto");
+      const timer = setTimeout(() => {
+        scrollToBottom("auto");
+        inputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
     }
+    return undefined;
+  }, [isOpen, isMinimized, scrollToBottom]);
+
+  // Prevent entire webpage from scrolling when user scrolls inside chatbot
+  useEffect(() => {
+    const windowEl = chatWindowRef.current;
+    if (!windowEl || !isOpen || isMinimized) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const container = messagesContainerRef.current;
+      if (!container) {
+        e.preventDefault();
+        return;
+      }
+
+      const isInsideMessages = container.contains(e.target as Node);
+
+      if (isInsideMessages) {
+        const { scrollTop, scrollHeight, clientHeight } = container;
+        const delta = e.deltaY;
+        const isScrollable = scrollHeight > clientHeight;
+
+        if (!isScrollable) {
+          // Content fits entirely, prevent background webpage scroll
+          e.preventDefault();
+          return;
+        }
+
+        const isAtTop = scrollTop <= 0;
+        const isAtBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 1;
+
+        if ((delta < 0 && isAtTop) || (delta > 0 && isAtBottom)) {
+          e.preventDefault();
+        }
+        e.stopPropagation();
+      } else {
+        // Scrolling over header or input area: prevent page scroll
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const container = messagesContainerRef.current;
+      if (!container) return;
+
+      const isInsideMessages = container.contains(e.target as Node);
+      if (!isInsideMessages && e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    windowEl.addEventListener("wheel", onWheel, { passive: false });
+    windowEl.addEventListener("touchmove", onTouchMove, { passive: false });
+
+    return () => {
+      windowEl.removeEventListener("wheel", onWheel);
+      windowEl.removeEventListener("touchmove", onTouchMove);
+    };
   }, [isOpen, isMinimized]);
 
   const toggleChat = useCallback(() => {
@@ -316,6 +432,9 @@ export function NakashiChatbot() {
     setMessages([{ ...INITIAL_GREETING, id: `greeting_${Date.now()}`, timestamp: Date.now() }]);
     setShowSuggestions(true);
     setInputValue("");
+    if (inputRef.current) {
+      inputRef.current.style.height = "auto";
+    }
   }, []);
 
   const sendMessage = useCallback(
@@ -335,6 +454,9 @@ export function NakashiChatbot() {
 
       setShowSuggestions(false);
       setInputValue("");
+      if (inputRef.current) {
+        inputRef.current.style.height = "auto";
+      }
 
       const userMessage: ChatMessage = {
         id: `user_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
@@ -386,6 +508,13 @@ export function NakashiChatbot() {
     },
     [isLoading, messages],
   );
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value);
+    const target = e.target;
+    target.style.height = "auto";
+    target.style.height = `${Math.min(target.scrollHeight, 80)}px`;
+  }, []);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
@@ -451,6 +580,7 @@ export function NakashiChatbot() {
           className={`nk-chat-window ${isMinimized ? "nk-chat-window--minimized" : ""}`}
           role="dialog"
           aria-label="NAKASHI Chat Assistant"
+          data-lenis-prevent="true"
         >
           {/* Header */}
           <div className="nk-chat-header">
@@ -497,7 +627,12 @@ export function NakashiChatbot() {
           {/* Messages Area */}
           {!isMinimized && (
             <>
-              <div className="nk-chat-messages">
+              <div
+                ref={messagesContainerRef}
+                className="nk-chat-messages"
+                data-lenis-prevent="true"
+                onScroll={handleScroll}
+              >
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
@@ -515,7 +650,15 @@ export function NakashiChatbot() {
                       {msg.productCards && msg.productCards.length > 0 && (
                         <div className="nk-chat-products-grid">
                           {msg.productCards.map((card) => (
-                            <ChatProductCard key={card.id} product={card} />
+                            <ChatProductCard
+                              key={card.id}
+                              product={card}
+                              onImageLoad={() => {
+                                if (isNearBottomRef.current) {
+                                  scrollToBottom("smooth");
+                                }
+                              }}
+                            />
                           ))}
                         </div>
                       )}
@@ -551,7 +694,7 @@ export function NakashiChatbot() {
                   <textarea
                     ref={inputRef}
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     placeholder="Type your message..."
                     className="nk-chat-input"

@@ -312,21 +312,36 @@ function Shop() {
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className="mt-4 flex items-baseline gap-3 border-y border-border/60 py-3">
+                  <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1.5 border-y border-border/60 py-3.5">
                     {selectedProduct.price !== undefined ? (
                       <>
-                        <span className="font-display text-2xl font-bold text-foreground">
+                        <span className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground leading-none">
                           {formatPrice(selectedProduct.price)}
                         </span>
-                        {selectedProduct.originalPrice && (
-                          <span className="text-sm text-muted-foreground line-through">
-                            {formatPrice(selectedProduct.originalPrice)}
-                          </span>
-                        )}
+                        {selectedProduct.originalPrice &&
+                          selectedProduct.originalPrice > selectedProduct.price && (
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-sm sm:text-base font-normal text-muted-foreground/75 line-through decoration-muted-foreground/60 leading-none">
+                                <span className="sr-only">Original MRP: </span>
+                                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70 mr-1">
+                                  MRP
+                                </span>
+                                {formatPrice(selectedProduct.originalPrice)}
+                              </span>
+                              <span className="inline-flex items-center rounded-md bg-brand-yellow/85 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-charcoal leading-none">
+                                {Math.round(
+                                  ((selectedProduct.originalPrice - selectedProduct.price) /
+                                    selectedProduct.originalPrice) *
+                                    100,
+                                )}
+                                % OFF
+                              </span>
+                            </div>
+                          )}
                       </>
                     ) : (
-                      <span className="font-display text-lg font-medium text-foreground">
-                        ₹ Price on Request / Custom Quote
+                      <span className="font-display text-lg font-medium text-muted-foreground italic">
+                        Price on Request / Custom Quote
                       </span>
                     )}
                   </div>
